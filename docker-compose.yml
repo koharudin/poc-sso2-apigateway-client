@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  #db:
+  #sso_v2:
+  sibrin_be:
+    build:
+      context: sibrin_be
+      dockerfile: local.Dockerfile
+    ports:
+      - 81:80
+    volumes:
+      - ./sibrin_be:/var/www
+      - ./sibrin_be/public:/var/www/html
+    command: bash -c "chown www-data:www-data -R /var/www/storage && apache2-foreground"
+  sibrin_fe:
+    tty: true
+    build:
+        context: sibrin_fe
+        dockerfile: local.Dockerfile
+    ports:
+      - 82:3000
+    volumes:
+      - ./sibrin_fe:/app
+    command: sh -c "yarn install && yarn start"
+  #simpeg_v3:
+  

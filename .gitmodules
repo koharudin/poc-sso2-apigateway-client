@@ -1,0 +1,16 @@
+[submodule "ssov2"]
+	path = ssov2
+	url = https://gitlab.brin.go.id/brinrockstar/sso-v2.git
+	branch = main
+[submodule "sibrin_be"]
+	path = sibrin_be
+	url = https://gitlab.brin.go.id/brinrockstar/be-short-url.git
+	branch = integrasi-sso-keycloak
+[submodule "sibrin_fe"]
+	path = sibrin_fe
+	url = https://gitlab.brin.go.id/brinrockstar/fe-short-url.git
+	branch = integrasi-sso-keycloak
+[submodule "simpegv3"]
+	path = simpegv3
+	url = https://gitlab.brin.go.id/brinrockstar/simpeg-brin-v3-backend.git
+	branch = main
