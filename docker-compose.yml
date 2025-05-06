@@ -4,7 +4,27 @@ services:
     ports:
       - 6379:6379
   #db:
-  #sso_v2:
+  sso_v2:
+    tty: true
+    build: 
+      context: ssov2
+      dockerfile: Dockerfile
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://192.168.100.165:5432/db_keycloak2
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=StackOverflow
+      #- KC_HOSTNAME=sso.mediakolaborasi.com
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_LOG_LEVEL=DEBUG
+      - TZ=Asia/Jakarta
+    ports:
+      - "89:8080"
+    command: start-dev 
+    volumes:
+      - ./docker-dev-volumes/keycloak-providers:/opt/keycloak/providers
+      - ./docker-dev-volumes/keycloak-lib-main:/opt/keycloak-lib-main
   sibrin_be:
     build:
       context: sibrin_be
