@@ -3,22 +3,46 @@ services:
     image: redis
     ports:
       - 6379:6379
-  #db:
+  db:
+    ports:
+      - 5432:5432
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - TZ=Asia/Jakarta
+    volumes:
+      - ./docker-dev-volumes/pg_data:/var/lib/postgresql/data  # Persist PostgreSQL data
+      - ./db/init:/docker-entrypoint-initdb.d  # Mounts init scripts
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+ 
   sso_v2:
     tty: true
+    depends_on:
+      - db
     build: 
       context: ssov2
       dockerfile: Dockerfile
     environment:
       - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://192.168.100.165:5432/db_keycloak2
+      - KC_DB_URL=jdbc:postgresql://db:5432/db_keycloak
       - KC_DB_USERNAME=postgres
-      - KC_DB_PASSWORD=StackOverflow
+      - KC_DB_PASSWORD=postgres
       #- KC_HOSTNAME=sso.mediakolaborasi.com
+      #- KC_HOSTNAME=sso3.mediakolaborasi.com
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
       - KC_LOG_LEVEL=DEBUG
       - TZ=Asia/Jakarta
+      #- KEYCLOAK_PROXY=edge
+      #- KEYCLOAK_HOSTNAME=sso3.mediakolaborasi.com
+      - KEYCLOAK_HTTP_ENABLED=true
     ports:
       - "89:8080"
     command: start-dev 
@@ -31,10 +55,12 @@ services:
       dockerfile: local.Dockerfile
     ports:
       - 81:80
+    depends_on:
+      - db
     volumes:
       - ./sibrin_be:/var/www
       - ./sibrin_be/public:/var/www/html
-    command: bash -c "chown www-data:www-data -R /var/www/storage && apache2-foreground"
+    command: bash -c "chown www-data:www-data -R /var/www/storage && composer update && apache2-foreground"
   sibrin_fe:
     tty: true
     build:
@@ -42,8 +68,21 @@ services:
         dockerfile: local.Dockerfile
     ports:
       - 82:3000
+    depends_on:
+      - db
     volumes:
       - ./sibrin_fe:/app
     command: sh -c "yarn install && yarn start"
-  #simpeg_v3:
+  simpeg_v3:
+    build:
+      context: simpegv3
+      dockerfile: local.Dockerfile
+    ports:
+      - 83:80
+    depends_on:
+      - db
+    volumes:
+      - ./simpegv3:/var/www
+      - ./simpegv3/public:/var/www/html
+    command: bash -c "chown www-data:www-data -R /var/www/storage && composer update && apache2-foreground"
   

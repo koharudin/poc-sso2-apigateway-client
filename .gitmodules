@@ -10,7 +10,15 @@
 	path = sibrin_fe
 	url = https://gitlab.brin.go.id/brinrockstar/fe-short-url.git
 	branch = integrasi-sso-keycloak
-[submodule "simpegv3"]
-	path = simpegv3
+[submodule "simpegv3_api"]
+	path = simpegv3_api
 	url = https://gitlab.brin.go.id/brinrockstar/simpeg-brin-v3-backend.git
+	branch = main
+[submodule "db"]
+	path = db
+	url = https://github.com/koharudin/poc-sso2-apigateway-client-db.git
+	branch = main
+[submodule "simpegv3_web"]
+	path = simpegv3_web
+	url = https://gitlab.brin.go.id/brinrockstar/simpeg-brin-temp.git
 	branch = main
